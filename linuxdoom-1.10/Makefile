@@ -4,9 +4,9 @@
 #
 # $Log:$
 #
-CC=  gcc  # gcc or g++
+CC=  gcc # Use -m32 for 32-bit compile
 
-CFLAGS=-g -Wall -DNORMALUNIX -DLINUX # -DUSEASM 
+CFLAGS=-g -Wall -O2 -DNORMALUNIX -DLINUX -DSNDSERV # -DUSEASM 
 LDFLAGS=-L/usr/X11R6/lib
 LIBS=-lXext -lX11 -lnsl -lm
 
@@ -77,7 +77,19 @@ OBJS=				\
 		$(O)/info.o				\
 		$(O)/sounds.o
 
-all:	 $(O)/linuxxdoom
+all:	$(O) $(O)/doom1.wad  $(O)/linuxxdoom $(O)/sndserver
+
+$(O):
+	mkdir $(O)
+
+$(O)/doom1.wad: ../wad/doom1.wad
+	cp $< $@
+
+$(O)/sndserver: ../sndserv/linux/sndserver
+	cp $< $@
+
+../sndserv/linux/sndserver:
+	(cd ../sndserv ; mkdir -p linux ; make)
 
 clean:
 	rm -f *.o *~ *.flc
@@ -89,6 +101,23 @@ $(O)/linuxxdoom:	$(OBJS) $(O)/i_main.o
 
 $(O)/%.o:	%.c
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# For sound you need /dev/dsp - For this, run: sudo apt-get install osspd
+# See: https://bugs.launchpad.net/ubuntu/+source/osspd/+bug/1857810
+
+# Update path, so it can find sndserver
+export PATH := .:$(PATH)
+	
+# Run doom - use an X server to provide 8-bit colour depth
+run:
+	Xephyr :2 -ac -br -screen 320x200x8 -reset -terminate -title DOOM &
+	sleep 1
+	(cd $(O) ; DISPLAY=:2 pasuspender ./linuxxdoom )
+
+debug:
+	Xephyr :2 -ac -br -screen 320x200x8 -reset -terminate -title DOOM &
+	sleep 1
+	(cd $(O) ; DISPLAY=:2 gdb ./linuxxdoom )
 
 #############################################################
 #

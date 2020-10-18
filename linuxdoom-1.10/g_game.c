@@ -21,9 +21,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id: g_game.c,v 1.8 1997/02/03 22:45:09 b1 Exp $";
-
 #include <string.h>
 #include <stdlib.h>
 
@@ -488,12 +485,12 @@ void G_DoLoadLevel (void)
     Z_CheckHeap ();
     
     // clear cmd building stuff
-    memset (gamekeydown, 0, sizeof(gamekeydown)); 
+    memset (gamekeydown, 0, sizeof(*gamekeydown)); 
     joyxmove = joyymove = 0; 
     mousex = mousey = 0; 
     sendpause = sendsave = paused = false; 
-    memset (mousebuttons, 0, sizeof(mousebuttons)); 
-    memset (joybuttons, 0, sizeof(joybuttons)); 
+    memset (mousebuttons, 0, sizeof(*mousebuttons)); 
+    memset (joybuttons, 0, sizeof(*joybuttons)); 
 } 
  
  

@@ -21,14 +21,12 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
 #include <math.h>
+#include <errno.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -62,7 +60,7 @@ rcsid[] = "$Id: i_unix.c,v 1.5 1997/02/03 22:45:10 b1 Exp $";
 #ifdef SNDSERV
 // Separate sound server process.
 FILE*	sndserver=0;
-char*	sndserver_filename = "./sndserver ";
+char*	sndserver_filename = "./sndserver";
 #elif SNDINTR
 
 // Update all 30 millisecs, approx. 30fps synchronized.
@@ -163,7 +161,7 @@ myioctl
   int*	arg )
 {   
     int		rc;
-    extern int	errno;
+    //extern int	errno;
     
     rc = ioctl(fd, command, arg);  
     if (rc < 0)
